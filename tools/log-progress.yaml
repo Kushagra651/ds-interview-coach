@@ -1,0 +1,25 @@
+name: log-progress
+description: Append a session entry to memory/progress.json and git commit it.
+input_schema:
+  type: object
+  required: [topic, question, score, note]
+  properties:
+    topic:
+      type: string
+      description: Topic area practiced
+    question:
+      type: string
+      description: The question or challenge title
+    score:
+      type: number
+      minimum: 1
+      maximum: 5
+      description: Score achieved (can be decimal for mock interviews)
+    note:
+      type: string
+      maxLength: 200
+      description: One-line observation about strength or gap shown
+    session_type:
+      type: string
+      enum: [interview-qa, code-challenge, mock-interview]
+      default: interview-qa

@@ -1,0 +1,33 @@
+name: evaluate-answer
+description: Score a user's interview answer on a 1-5 rubric and log it to progress memory.
+input_schema:
+  type: object
+  required: [topic, question, answer, score, feedback]
+  properties:
+    topic:
+      type: string
+      description: "The subject area (e.g. statistics, ml-theory, sql, deep-learning, coding)"
+    question:
+      type: string
+      description: The exact question that was asked
+    answer:
+      type: string
+      description: The user's answer verbatim
+    score:
+      type: integer
+      minimum: 1
+      maximum: 5
+      description: "1=wrong direction, 2=partial, 3=correct but incomplete, 4=good with minor gaps, 5=complete and deep"
+    feedback:
+      type: object
+      required: [correct, missing, interviewer_note]
+      properties:
+        correct:
+          type: string
+          description: What the user got right
+        missing:
+          type: string
+          description: What was missing or wrong
+        interviewer_note:
+          type: string
+          description: What a real interviewer would be looking for

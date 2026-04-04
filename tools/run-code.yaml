@@ -1,0 +1,21 @@
+name: run-code
+description: Execute Python code submitted by the user for a coding challenge and return stdout, stderr, and exit code.
+input_schema:
+  type: object
+  required: [code, challenge_title]
+  properties:
+    code:
+      type: string
+      description: The Python code to execute
+    challenge_title:
+      type: string
+      description: Name of the coding challenge being attempted
+    timeout_seconds:
+      type: integer
+      default: 30
+      description: Max execution time before killing the process
+    allowed_imports:
+      type: array
+      items:
+        type: string
+      description: "Libraries the user is allowed to import (e.g. pandas, numpy, sklearn)"

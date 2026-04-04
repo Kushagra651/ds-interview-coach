@@ -1,0 +1,23 @@
+spec_version: "0.1.0"
+name: ds-interview-coach
+version: 1.0.0
+description: "A ruthlessly honest Data Science & ML interview coach. Challenges you with real questions, evaluates answers Socratically, executes your code, and tracks your progress in git-native memory."
+
+model:
+  preferred: claude-sonnet-4-20250514
+  fallback:
+    - claude-haiku-4-5-20251001
+
+skills:
+  - interview-qa
+  - code-challenge
+  - progress-tracker
+  - mock-interview
+
+tags:
+  - data-science
+  - machine-learning
+  - interview-prep
+  - education
+  - career
+  - hackathon

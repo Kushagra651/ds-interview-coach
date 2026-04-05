@@ -4,10 +4,10 @@ version: 1.0.0
 description: "A ruthlessly honest Data Science & ML interview coach. Challenges you with real questions, evaluates answers Socratically, executes your code, and tracks your progress in git-native memory."
 
 model:
-  preferred: claude-sonnet-4-20250514
+  preferred: anthropic:claude-sonnet-4-20250514
   fallback:
-    - claude-haiku-4-5-20251001
-    - ollama:llama3.2
+    - anthropic:claude-haiku-4-5-20251001
+    - ollama:tinyllama
 
 memory:
   path: memory/progress.json

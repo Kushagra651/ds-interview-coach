@@ -5,616 +5,164 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DS Interview Coach</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
-
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --border: #222222;
-    --border-bright: #333333;
-    --text: #e8e8e8;
-    --muted: #666666;
-    --accent: #00ff88;
-    --accent-dim: rgba(0,255,136,0.08);
-    --accent-glow: rgba(0,255,136,0.15);
-    --warn: #ff9900;
-    --danger: #ff4444;
-    --info: #4488ff;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    height: 100vh;
-    display: grid;
-    grid-template-rows: 52px 1fr;
-    overflow: hidden;
-  }
-
-  /* Header */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 500;
-  }
-
-  .logo-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
-    50% { opacity: 0.6; box-shadow: 0 0 16px var(--accent); }
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .pill {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 100px;
-    border: 1px solid var(--border-bright);
-    color: var(--muted);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .pill:hover { border-color: var(--accent); color: var(--accent); }
-
-  .pill.active {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* Main layout */
-  main {
-    display: grid;
-    grid-template-columns: 220px 1fr 200px;
-    overflow: hidden;
-  }
-
-  /* Sidebar */
-  aside {
-    border-right: 1px solid var(--border);
-    padding: 16px 0;
-    overflow-y: auto;
-    background: var(--surface);
-  }
-
-  .sidebar-section {
-    margin-bottom: 20px;
-  }
-
-  .sidebar-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    padding: 0 16px;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-
-  .skill-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: background 0.1s;
-    border-left: 2px solid transparent;
-  }
-
-  .skill-item:hover { background: rgba(255,255,255,0.03); }
-
-  .skill-item.active {
-    background: var(--accent-dim);
-    border-left-color: var(--accent);
-  }
-
-  .skill-icon {
-    font-size: 14px;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .skill-name {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text);
-  }
-
-  .skill-item.active .skill-name { color: var(--accent); }
-
-  /* Topic badges */
-  .topic-badge {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 16px;
-    cursor: pointer;
-  }
-
-  .topic-badge:hover .topic-name { color: var(--text); }
-
-  .topic-name {
-    font-size: 12px;
-    color: var(--muted);
-    transition: color 0.1s;
-  }
-
-  .topic-score {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 3px;
-  }
-
-  .score-high { background: rgba(0,255,136,0.12); color: var(--accent); }
-  .score-mid  { background: rgba(255,153,0,0.12); color: var(--warn); }
-  .score-low  { background: rgba(255,68,68,0.12);  color: var(--danger); }
-  .score-none { background: rgba(255,255,255,0.05); color: var(--muted); }
-
-  /* Chat area */
-  .chat-area {
-    display: grid;
-    grid-template-rows: 1fr auto;
-    overflow: hidden;
-  }
-
-  .messages {
-    overflow-y: auto;
-    padding: 24px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    scroll-behavior: smooth;
-  }
-
-  .message {
-    display: flex;
-    gap: 12px;
-    max-width: 800px;
-  }
-
-  .message.user { flex-direction: row-reverse; align-self: flex-end; }
-
-  .avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .avatar.coach {
-    background: var(--accent-dim);
-    border: 1px solid rgba(0,255,136,0.3);
-    color: var(--accent);
-  }
-
-  .avatar.user-av {
-    background: rgba(68,136,255,0.1);
-    border: 1px solid rgba(68,136,255,0.3);
-    color: var(--info);
-  }
-
-  .bubble {
-    padding: 12px 14px;
-    border-radius: 8px;
-    line-height: 1.65;
-    font-size: 13.5px;
-    max-width: 620px;
-  }
-
-  .message.coach .bubble {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top-left-radius: 2px;
-    color: var(--text);
-  }
-
-  .message.user .bubble {
-    background: rgba(68,136,255,0.08);
-    border: 1px solid rgba(68,136,255,0.2);
-    border-top-right-radius: 2px;
-    color: #c0d4ff;
-  }
-
-  .bubble code {
-    font-family: var(--mono);
-    font-size: 12px;
-    background: rgba(255,255,255,0.06);
-    padding: 1px 5px;
-    border-radius: 3px;
-    color: var(--accent);
-  }
-
-  .bubble pre {
-    background: #0d0d0d;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
-    margin-top: 10px;
-    overflow-x: auto;
-  }
-
-  .bubble pre code {
-    background: none;
-    padding: 0;
-    font-size: 12px;
-    color: #a8d8a8;
-  }
-
-  /* Score card in bubble */
-  .score-card {
-    margin-top: 12px;
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  .score-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 11px;
-  }
-
-  .score-value {
-    font-weight: 500;
-    color: var(--accent);
-  }
-
-  .score-body { padding: 10px 12px; font-size: 12.5px; }
-
-  .score-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 6px;
-    align-items: flex-start;
-  }
-
-  .score-icon { flex-shrink: 0; margin-top: 1px; }
-  .check { color: var(--accent); }
-  .cross { color: var(--danger); }
-  .bulb  { color: var(--warn); }
-
-  /* Typing indicator */
-  .typing {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 14px;
-  }
-
-  .dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--muted);
-    animation: typing 1.2s ease-in-out infinite;
-  }
-
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes typing {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-4px); opacity: 1; }
-  }
-
-  /* Input area */
-  .input-area {
-    padding: 16px 28px;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  .quick-actions {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-
-  .quick-btn {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid var(--border-bright);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .quick-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-dim);
-  }
-
-  .input-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-  }
-
-  textarea {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13.5px;
-    padding: 10px 14px;
-    resize: none;
-    min-height: 44px;
-    max-height: 120px;
-    outline: none;
-    transition: border-color 0.15s;
-    line-height: 1.5;
-  }
-
-  textarea:focus { border-color: var(--accent); }
-  textarea::placeholder { color: var(--muted); }
-
-  .send-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
-    border: 1px solid var(--accent);
-    background: var(--accent-dim);
-    color: var(--accent);
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-
-  .send-btn:hover {
-    background: var(--accent);
-    color: var(--bg);
-  }
-
-  .send-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  /* Right panel */
-  .right-panel {
-    border-left: 1px solid var(--border);
-    background: var(--surface);
-    padding: 16px;
-    overflow-y: auto;
-  }
-
-  .panel-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .stat-block {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 3px;
-  }
-
-  .stat-value {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .stat-value.green { color: var(--accent); }
-  .stat-value.orange { color: var(--warn); }
-
-  .mini-bar {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-
-  .mini-bar-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-    transition: width 0.5s ease;
-  }
-
-  .session-log {
-    margin-top: 8px;
-  }
-
-  .log-entry {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-  }
-
-  .log-entry:last-child { border-bottom: none; }
-
-  .log-topic {
-    color: var(--muted);
-    font-family: var(--mono);
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .log-score {
-    font-family: var(--mono);
-    font-size: 11px;
-    width: 24px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  /* Git commit toast */
-  .git-toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #0d1117;
-    border: 1px solid rgba(0,255,136,0.3);
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    transition: transform 0.3s ease;
-    z-index: 100;
-    white-space: nowrap;
-  }
-
-  .git-toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--bright:#333;--text:#e8e8e8;--muted:#555;--accent:#00ff88;--adim:rgba(0,255,136,0.08);--warn:#ff9900;--danger:#ff4444;--info:#4488ff;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;height:100vh;display:grid;grid-template-rows:52px 1fr;overflow:hidden}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--surface)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px var(--accent)}50%{opacity:.6;box-shadow:0 0 16px var(--accent)}}
+.key-btn{font-family:var(--mono);font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid var(--bright);color:var(--muted);background:transparent;cursor:pointer;transition:all .15s}
+.key-btn:hover{border-color:var(--accent);color:var(--accent)}
+.key-btn.active{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+main{display:grid;grid-template-columns:200px 1fr 190px;overflow:hidden}
+aside{border-right:1px solid var(--border);padding:16px 0;overflow-y:auto;background:var(--surface)}
+.slabel{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);padding:0 16px;margin-bottom:6px;text-transform:uppercase}
+.skill-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:background .1s}
+.skill-item:hover{background:rgba(255,255,255,.03)}
+.skill-item.active{background:var(--adim);border-left-color:var(--accent)}
+.skill-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.skill-name{font-family:var(--mono);font-size:12px;color:var(--text)}
+.skill-item.active .skill-name{color:var(--accent)}
+.topic-row{display:flex;align-items:center;justify-content:space-between;padding:5px 16px}
+.tname{font-size:12px;color:var(--muted)}
+.tscore{font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:3px;background:rgba(255,255,255,.05);color:var(--muted)}
+.tscore.hi{background:rgba(0,255,136,.12);color:var(--accent)}
+.tscore.md{background:rgba(255,153,0,.12);color:var(--warn)}
+.tscore.lo{background:rgba(255,68,68,.12);color:var(--danger)}
+.git-section{padding:0 16px;margin-top:4px}
+.git-entry{font-family:var(--mono);font-size:10px;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--border);line-height:1.5;word-break:break-all}
+.git-entry.new{color:var(--accent)}
+.chat-area{display:grid;grid-template-rows:1fr auto;overflow:hidden}
+.messages{overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;scroll-behavior:smooth}
+.message{display:flex;gap:12px;max-width:800px}
+.message.user{flex-direction:row-reverse;align-self:flex-end}
+.avatar{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px}
+.avatar.ai{background:var(--adim);border:1px solid rgba(0,255,136,.3);color:var(--accent)}
+.avatar.you{background:rgba(68,136,255,.1);border:1px solid rgba(68,136,255,.3);color:var(--info)}
+.bubble{padding:12px 14px;border-radius:8px;line-height:1.65;font-size:13.5px;max-width:600px}
+.message.coach .bubble{background:var(--surface);border:1px solid var(--border);border-top-left-radius:2px}
+.message.user .bubble{background:rgba(68,136,255,.08);border:1px solid rgba(68,136,255,.2);border-top-right-radius:2px;color:#c0d4ff}
+.bubble code{font-family:var(--mono);font-size:12px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;color:var(--accent)}
+.score-card{margin-top:10px;border:1px solid var(--bright);border-radius:6px;overflow:hidden}
+.sc-head{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px}
+.sc-val{font-weight:500;color:var(--accent)}
+.sc-body{padding:10px 12px;font-size:12.5px}
+.sc-row{display:flex;gap:8px;margin-bottom:5px;align-items:flex-start}
+.typing{display:flex;align-items:center;gap:4px;padding:10px 14px}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:tdot 1.2s ease-in-out infinite}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.input-area{padding:14px 28px;border-top:1px solid var(--border);background:var(--surface)}
+.quick-actions{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.qbtn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--bright);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.qbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.input-row{display:flex;gap:10px;align-items:flex-end}
+textarea{flex:1;background:var(--bg);border:1px solid var(--bright);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:13.5px;padding:10px 14px;resize:none;min-height:44px;max-height:120px;outline:none;transition:border-color .15s;line-height:1.5}
+textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:var(--muted)}
+textarea:disabled{opacity:.4;cursor:not-allowed}
+.send-btn{width:44px;height:44px;border-radius:6px;border:1px solid var(--accent);background:var(--adim);color:var(--accent);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.send-btn:hover{background:var(--accent);color:var(--bg)}
+.send-btn:disabled{opacity:.3;cursor:not-allowed}
+.rpanel{border-left:1px solid var(--border);background:var(--surface);padding:14px;overflow-y:auto}
+.ptitle{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stat-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:8px}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px}
+.stat-value{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text)}
+.stat-value.g{color:var(--accent)}.stat-value.o{color:var(--warn)}.stat-value.r{color:var(--danger)}
+.mini-bar{height:3px;background:var(--border);border-radius:2px;margin-top:6px}
+.mini-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s}
+.log-entry{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+.log-entry:last-child{border-bottom:none}
+.log-topic{color:var(--muted);font-family:var(--mono);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log-score{font-family:var(--mono);font-size:11px;width:24px;text-align:right;flex-shrink:0}
+/* API Key Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:var(--surface);border:1px solid var(--bright);border-radius:12px;padding:28px;width:440px;max-width:90vw}
+.modal-title{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--accent);margin-bottom:8px}
+.modal-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.modal-sub a{color:var(--info);text-decoration:none}
+.modal-sub a:hover{text-decoration:underline}
+.modal input{width:100%;background:var(--bg);border:1px solid var(--bright);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:10px 14px;outline:none;margin-bottom:8px;transition:border-color .15s}
+.modal input:focus{border-color:var(--accent)}
+.modal input::placeholder{color:var(--muted)}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+.modal-btn{flex:1;padding:10px;border-radius:6px;border:1px solid var(--bright);background:transparent;color:var(--muted);font-family:var(--mono);font-size:12px;cursor:pointer;transition:all .15s}
+.modal-btn.primary{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.modal-btn.primary:hover{background:var(--accent);color:var(--bg)}
+.modal-btn:hover{border-color:var(--text);color:var(--text)}
+.modal-error{font-family:var(--mono);font-size:11px;color:var(--danger);margin-top:4px;min-height:16px}
+.provider-tabs{display:flex;gap:6px;margin-bottom:16px}
+.ptab{flex:1;padding:7px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s;text-align:center}
+.ptab.active{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#0d1117;border:1px solid rgba(0,255,136,.3);border-radius:6px;padding:8px 16px;font-family:var(--mono);font-size:11px;color:var(--accent);transition:transform .3s;z-index:100;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bright);border-radius:2px}
 </style>
 </head>
 <body>
 
+<!-- API Key Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">⚡ DS Interview Coach</div>
+    <div class="modal-sub">
+      Enter your API key to start coaching. Your key stays in your browser only — never sent anywhere except the API endpoint.<br><br>
+      Get a free key: <a href="https://console.groq.com" target="_blank">Groq (free)</a> · <a href="https://console.anthropic.com" target="_blank">Anthropic</a>
+    </div>
+    <div class="provider-tabs">
+      <button class="ptab active" onclick="setProvider('groq')">Groq (free)</button>
+      <button class="ptab" onclick="setProvider('anthropic')">Anthropic</button>
+    </div>
+    <input type="password" id="key-input" placeholder="gsk_... or sk-ant-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveKey()"/>
+    <div class="modal-error" id="modal-error"></div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" onclick="saveKey()">Start Coaching →</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="logo">
-    <div class="logo-dot"></div>
+    <div class="dot"></div>
     ds-interview-coach
-    <span style="color:var(--muted); font-weight:300">/ v1.0.0</span>
+    <span style="color:var(--muted);font-weight:300">/ v1.0.0</span>
   </div>
-  <div class="header-actions">
-    <button class="pill active" onclick="setMode('qa')">interview-qa</button>
-    <button class="pill" onclick="setMode('code')">code-challenge</button>
-    <button class="pill" onclick="setMode('mock')">mock-interview</button>
-    <button class="pill" onclick="setMode('progress')">progress</button>
-  </div>
+  <button class="key-btn" onclick="showModal()" id="key-status">⚙ Set API Key</button>
 </header>
 
 <main>
   <aside>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Skills</div>
-      <div class="skill-item active" onclick="setMode('qa')">
-        <span class="skill-icon">⚡</span>
-        <span class="skill-name">interview-qa</span>
+    <div style="margin-bottom:16px">
+      <div class="slabel">Skills</div>
+      <div class="skill-item active" id="skill-qa" onclick="switchSkill('qa')">
+        <span class="skill-icon">⚡</span><span class="skill-name">interview-qa</span>
       </div>
-      <div class="skill-item" onclick="setMode('code')">
-        <span class="skill-icon">⌨</span>
-        <span class="skill-name">code-challenge</span>
+      <div class="skill-item" id="skill-code" onclick="switchSkill('code')">
+        <span class="skill-icon">⌨</span><span class="skill-name">code-challenge</span>
       </div>
-      <div class="skill-item" onclick="setMode('mock')">
-        <span class="skill-icon">🎙</span>
-        <span class="skill-name">mock-interview</span>
+      <div class="skill-item" id="skill-mock" onclick="switchSkill('mock')">
+        <span class="skill-icon">🎙</span><span class="skill-name">mock-interview</span>
       </div>
-      <div class="skill-item" onclick="setMode('progress')">
-        <span class="skill-icon">📊</span>
-        <span class="skill-name">progress-tracker</span>
+      <div class="skill-item" id="skill-progress" onclick="switchSkill('progress')">
+        <span class="skill-icon">📊</span><span class="skill-name">progress-tracker</span>
       </div>
     </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Topics</div>
-      <div class="topic-badge">
-        <span class="topic-name">statistics</span>
-        <span class="topic-score score-none">—</span>
-      </div>
-      <div class="topic-badge">
-        <span class="topic-name">ml-theory</span>
-        <span class="topic-score score-none">—</span>
-      </div>
-      <div class="topic-badge">
-        <span class="topic-name">deep-learning</span>
-        <span class="topic-score score-none">—</span>
-      </div>
-      <div class="topic-badge">
-        <span class="topic-name">sql</span>
-        <span class="topic-score score-none">—</span>
-      </div>
-      <div class="topic-badge">
-        <span class="topic-name">coding</span>
-        <span class="topic-score score-none">—</span>
-      </div>
-      <div class="topic-badge">
-        <span class="topic-name">mlops</span>
-        <span class="topic-score score-none">—</span>
-      </div>
+    <div style="margin-bottom:16px">
+      <div class="slabel">Topics</div>
+      <div class="topic-row"><span class="tname">statistics</span><span class="tscore" id="t-statistics">—</span></div>
+      <div class="topic-row"><span class="tname">ml-theory</span><span class="tscore" id="t-ml-theory">—</span></div>
+      <div class="topic-row"><span class="tname">deep-learning</span><span class="tscore" id="t-deep">—</span></div>
+      <div class="topic-row"><span class="tname">sql</span><span class="tscore" id="t-sql">—</span></div>
+      <div class="topic-row"><span class="tname">coding</span><span class="tscore" id="t-coding">—</span></div>
+      <div class="topic-row"><span class="tname">mlops</span><span class="tscore" id="t-mlops">—</span></div>
     </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Git Memory</div>
-      <div style="padding: 0 16px">
-        <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.8;">
-          <div id="git-log-1" style="color: var(--border-bright);">— no commits yet —</div>
-          <div id="git-log-2"></div>
-          <div id="git-log-3"></div>
-        </div>
+    <div>
+      <div class="slabel">Git Memory</div>
+      <div class="git-section" id="git-log">
+        <div class="git-entry">— no commits yet —</div>
       </div>
     </div>
   </aside>
@@ -622,346 +170,404 @@
   <div class="chat-area">
     <div class="messages" id="messages">
       <div class="message coach">
-        <div class="avatar coach">AI</div>
+        <div class="avatar ai">AI</div>
         <div class="bubble">
-          Welcome. I'm your DS & ML interview coach.<br><br>
-          I don't give you answers — I give you the discomfort you need to grow. When you answer, I probe. When you're wrong, I ask <em>why</em> before I correct.<br><br>
-          Every session is committed to your git log. Type a topic to start, or pick a quick action below.
+          Welcome. I'm your DS &amp; ML interview coach.<br><br>
+          I don't give you answers — I give you the discomfort you need to grow. Pick a skill from the left, or use a quick action below.<br><br>
+          <span style="color:var(--muted);font-size:12px">Set your API key (top right) to begin.</span>
         </div>
       </div>
     </div>
-
     <div class="input-area">
       <div class="quick-actions">
-        <button class="quick-btn" onclick="quickSend('Quiz me on random forests')">random forests</button>
-        <button class="quick-btn" onclick="quickSend('Statistics question please')">statistics</button>
-        <button class="quick-btn" onclick="quickSend('Give me a SQL challenge')">SQL challenge</button>
-        <button class="quick-btn" onclick="quickSend('Run a full mock interview')">mock interview</button>
-        <button class="quick-btn" onclick="quickSend('Show my progress report')">my progress</button>
+        <button class="qbtn" onclick="quick('Quiz me on random forests')">random forests</button>
+        <button class="qbtn" onclick="quick('Give me a statistics question')">statistics</button>
+        <button class="qbtn" onclick="quick('Give me a SQL window function challenge')">SQL challenge</button>
+        <button class="qbtn" onclick="quick('Run a full mock interview')">mock interview</button>
+        <button class="qbtn" onclick="quick('Show my progress and weak areas')">my progress</button>
       </div>
       <div class="input-row">
-        <textarea id="input" placeholder="Ask a question, name a topic, or type your answer..." rows="1"
-          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">↑</button>
+        <textarea id="inp" placeholder="Set your API key to start..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+          disabled></textarea>
+        <button class="send-btn" id="send-btn" onclick="send()" disabled>↑</button>
       </div>
     </div>
   </div>
 
-  <div class="right-panel">
-    <div class="panel-title">Session Stats</div>
-
-    <div class="stat-block">
-      <div class="stat-label">Questions answered</div>
-      <div class="stat-value" id="stat-q">0</div>
-    </div>
-
+  <div class="rpanel">
+    <div class="ptitle">Session Stats</div>
+    <div class="stat-block"><div class="stat-label">Questions answered</div><div class="stat-value" id="sq">0</div></div>
     <div class="stat-block">
       <div class="stat-label">Session avg score</div>
-      <div class="stat-value green" id="stat-avg">—</div>
-      <div class="mini-bar">
-        <div class="mini-bar-fill" id="stat-bar" style="width:0%"></div>
-      </div>
+      <div class="stat-value g" id="savg">—</div>
+      <div class="mini-bar"><div class="mini-fill" id="sbar" style="width:0%"></div></div>
     </div>
-
-    <div class="stat-block">
-      <div class="stat-label">Hiring signal</div>
-      <div class="stat-value orange" id="stat-signal">—</div>
-    </div>
-
-    <div class="panel-title" style="margin-top:16px">Session Log</div>
-    <div class="session-log" id="session-log">
-      <div style="font-size:11px; color:var(--muted); font-family:var(--mono);">no entries yet</div>
-    </div>
+    <div class="stat-block"><div class="stat-label">Hiring signal</div><div class="stat-value o" id="ssig">—</div></div>
+    <div class="ptitle" style="margin-top:14px">Session Log</div>
+    <div id="slog"><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">no entries yet</div></div>
   </div>
 </main>
 
-<div class="git-toast" id="git-toast">
-  ✓ committed to git
-</div>
+<div class="toast" id="toast">✓ committed to git</div>
 
 <script>
-const SYSTEM_PROMPT = `You are a senior data scientist and ML interview coach with 10 years of hiring experience. You run this coaching session with strict rules:
-
-RULES:
-- Never give the answer before the user attempts it
-- Always ask at least one Socratic follow-up before scoring
-- Score every answer 1-5 with explicit breakdown
-- Never fabricate statistics or paper results
-- Be direct, not sycophantic
-
-SCORING FORMAT (use this exactly when you score):
-SCORE: X/5
-✓ CORRECT: [what they got right]
-✗ MISSING: [what was wrong or missing]  
-💡 INTERVIEWER EXPECTS: [what a real interviewer wants to hear]
-
-TOPICS YOU COVER: statistics, probability, ML theory, deep learning, SQL, coding challenges, MLOps, ML system design.
-
-When asked for a coding challenge, provide a clear problem statement with sample input/output. When given code to evaluate, analyze it for correctness, style, and efficiency.
-
-Keep responses concise and sharp. No fluff.`;
-
-let sessionScores = [];
-let questionCount = 0;
-let conversationHistory = [];
-let currentMode = 'qa';
+// ── State ──────────────────────────────────────────────
+let apiKey = localStorage.getItem('ds_coach_key') || '';
+let provider = localStorage.getItem('ds_coach_provider') || 'groq';
+let currentSkill = 'qa';
+let history = [];
+let scores = [];
+let gitLog = [];
 let isLoading = false;
 
-const gitCommits = [];
+// ── Skill system prompts ────────────────────────────────
+const SKILLS = {
+  qa: `You are a senior DS/ML interviewer. Ask ONE interview question on the requested topic. Wait for the answer. Ask ONE Socratic follow-up. Then evaluate using EXACTLY:
 
-function setMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.skill-item').forEach(s => s.classList.remove('active'));
+Score: X/5
+✓ Correct: [what they got right]
+✗ Missing: [what was wrong or missing]
+💡 Interviewer expects: [what a real interviewer wants]
 
-  const modeMap = { qa: 0, code: 1, mock: 2, progress: 3 };
-  const idx = modeMap[mode] ?? 0;
-  document.querySelectorAll('.pill')[idx]?.classList.add('active');
-  document.querySelectorAll('.skill-item')[idx]?.classList.add('active');
+X must be 1-5. Never use /100. Never give the answer before they attempt. Never be sycophantic. Topics: statistics, probability, ML theory, deep learning, SQL, MLOps, system design.`,
 
-  const prompts = {
-    qa: 'Quiz me on a DS/ML topic',
-    code: 'Give me a Python coding challenge',
-    mock: 'Run a full mock interview session',
-    progress: 'Show my progress report'
-  };
-  document.getElementById('input').placeholder = prompts[mode] || 'Type your message...';
+  code: `You are a senior DS/ML interviewer running a coding round. Give a clear Python coding challenge with: Context (1 sentence), Task, Sample input/output, Constraints (libraries allowed, time limit ~10 min). Wait for their code. Then evaluate:
+
+Score: X/5
+✓ Correctness: [does it work]
+✗ Issues: [bugs, inefficiency, style problems]
+💡 Clean solution: [show the ideal solution with comments]
+
+X must be 1-5. Challenges should use pandas, numpy, or sklearn.`,
+
+  mock: `You are conducting a full DS/ML mock interview. Run through 5 rounds:
+Round 1 - Warm-up: 1 easy question
+Round 2 - Statistics: 1 question  
+Round 3 - ML Theory: 1 question
+Round 4 - SQL or Coding: 1 challenge
+Round 5 - System Design: 1 open-ended question
+
+After all rounds give a final scorecard:
+OVERALL SCORE: X/5
+Hiring signal: [Strong hire / Hire / Mixed / Not ready]
+Top strength: [one sentence]
+Critical gap: [one sentence]
+
+Keep it conversational. One round at a time.`,
+
+  progress: `You are a DS/ML interview coach reviewing the student's progress. Analyze their session history and provide:
+1. Overall performance summary
+2. Topic breakdown (strong vs weak)
+3. Specific recommendations for what to study next
+4. Estimated sessions to be interview-ready
+
+Be direct and specific. Name exact topics and subtopics to focus on.`
+};
+
+const SKILL_LABELS = {
+  qa: 'interview-qa', code: 'code-challenge',
+  mock: 'mock-interview', progress: 'progress-tracker'
+};
+
+const PLACEHOLDERS = {
+  qa: 'Name a topic to be quizzed on...',
+  code: 'Ask for a coding challenge...',
+  mock: 'Type "start" to begin the mock interview...',
+  progress: 'Type "show my progress"...'
+};
+
+// ── API Key Modal ───────────────────────────────────────
+function setProvider(p) {
+  provider = p;
+  document.querySelectorAll('.ptab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0&&p==='groq')||(i===1&&p==='anthropic'));
+  });
+  document.getElementById('key-input').placeholder =
+    p === 'groq' ? 'gsk_...' : 'sk-ant-...';
 }
 
-function quickSend(text) {
-  document.getElementById('input').value = text;
-  sendMessage();
+function showModal() {
+  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('key-input').value = apiKey;
+  document.getElementById('modal-error').textContent = '';
 }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+function saveKey() {
+  const val = document.getElementById('key-input').value.trim();
+  const err = document.getElementById('modal-error');
+  if (!val) { err.textContent = 'Please enter an API key.'; return; }
+  if (provider === 'groq' && !val.startsWith('gsk_')) {
+    err.textContent = 'Groq keys start with gsk_'; return;
+  }
+  if (provider === 'anthropic' && !val.startsWith('sk-ant-')) {
+    err.textContent = 'Anthropic keys start with sk-ant-'; return;
+  }
+  apiKey = val;
+  localStorage.setItem('ds_coach_key', apiKey);
+  localStorage.setItem('ds_coach_provider', provider);
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('key-status').textContent = '✓ ' + provider;
+  document.getElementById('key-status').classList.add('active');
+  document.getElementById('inp').disabled = false;
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('inp').placeholder = PLACEHOLDERS[currentSkill];
+  document.getElementById('inp').focus();
+  addMessage('coach', `Connected via <code>${provider}</code>. I'm ready to coach. What topic do you want to practice?`);
 }
 
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
+// ── Skill switching ─────────────────────────────────────
+function switchSkill(skill) {
+  currentSkill = skill;
+  history = []; // reset conversation for new skill
+  document.querySelectorAll('.skill-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('skill-' + (skill==='qa'?'qa':skill==='code'?'code':skill==='mock'?'mock':'progress')).classList.add('active');
+  if (apiKey) {
+    document.getElementById('inp').placeholder = PLACEHOLDERS[skill];
+    const msgs = {
+      qa: 'Switched to <code>interview-qa</code> mode. Name a topic and I\'ll quiz you.',
+      code: 'Switched to <code>code-challenge</code> mode. Ask for a challenge or name a topic (e.g. "pandas challenge", "implement k-means").',
+      mock: 'Switched to <code>mock-interview</code> mode. Type <code>start</code> to begin a full 30-minute simulated interview.',
+      progress: 'Switched to <code>progress-tracker</code> mode. Type "show my progress" to see your weak areas and recommendations.'
+    };
+    addMessage('coach', msgs[skill]);
   }
 }
 
-function addMessage(role, content) {
-  const messages = document.getElementById('messages');
+// ── Chat ────────────────────────────────────────────────
+function quick(text) {
+  if (!apiKey) { showModal(); return; }
+  document.getElementById('inp').value = text;
+  send();
+}
+
+async function send() {
+  const inp = document.getElementById('inp');
+  const text = inp.value.trim();
+  if (!text || isLoading || !apiKey) return;
+  inp.value = ''; inp.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+  isLoading = true;
+  addMessage('user', text);
+  history.push({ role: 'user', content: text });
+  addTyping();
+  try {
+    const reply = await callAPI();
+    removeTyping();
+    history.push({ role: 'assistant', content: reply });
+    renderMessage(reply);
+    extractScore(reply, text);
+  } catch(e) {
+    removeTyping();
+    addMessage('coach', `Error: ${e.message}`);
+  }
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  inp.focus();
+}
+
+async function callAPI() {
+  if (provider === 'groq') {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: SKILLS[currentSkill] },
+          ...history
+        ]
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json();
+      throw new Error(e.error?.message || `Groq error ${res.status}`);
+    }
+    return (await res.json()).choices[0].message.content;
+  } else {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system: SKILLS[currentSkill],
+        messages: history
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json();
+      throw new Error(e.error?.message || `Anthropic error ${res.status}`);
+    }
+    return (await res.json()).content[0].text;
+  }
+}
+
+// ── Message rendering ───────────────────────────────────
+function addMessage(role, html) {
+  const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = `message ${role === 'user' ? 'user' : 'coach'}`;
+  const av = document.createElement('div');
+  av.className = `avatar ${role === 'user' ? 'you' : 'ai'}`;
+  av.textContent = role === 'user' ? 'YOU' : 'AI';
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.innerHTML = html.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>');
+  div.appendChild(av); div.appendChild(bub);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
 
-  const avatar = document.createElement('div');
-  avatar.className = `avatar ${role === 'user' ? 'user-av' : 'coach'}`;
-  avatar.textContent = role === 'user' ? 'YOU' : 'AI';
+function renderMessage(text) {
+  // Check for score card pattern
+  const scoreMatch = text.match(/Score:\s*([1-5])\/5/i);
+  if (scoreMatch) {
+    const correct = text.match(/✓ Correct:\s*([^\n✗💡]+)/)?.[1]?.trim() || '';
+    const missing = text.match(/✗ Missing:\s*([^\n💡]+)/)?.[1]?.trim() || '';
+    const expects = text.match(/💡 Interviewer expects:\s*([^\n]+)/)?.[1]?.trim() || '';
+    const before = text.split(/Score:\s*[1-5]\/5/i)[0].trim();
 
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'message coach';
+    const av = document.createElement('div');
+    av.className = 'avatar ai'; av.textContent = 'AI';
+    const bub = document.createElement('div');
+    bub.className = 'bubble';
 
-  // Parse score card from content
-  if (content.includes('SCORE:') && role === 'assistant') {
-    const parts = content.split(/(SCORE: \d\/5)/);
-    let html = '';
-    let scoreStr = '';
-    for (let i = 0; i < parts.length; i++) {
-      if (parts[i].match(/SCORE: \d\/5/)) {
-        scoreStr = parts[i];
-        // Build score card from what follows
-        const rest = parts[i + 1] || '';
-        const correct = rest.match(/✓ CORRECT: ([^\n✗💡]+)/)?.[1]?.trim() || '';
-        const missing = rest.match(/✗ MISSING: ([^\n💡]+)/)?.[1]?.trim() || '';
-        const expects = rest.match(/💡 INTERVIEWER EXPECTS: ([^\n]+)/)?.[1]?.trim() || '';
-        const scoreNum = parseInt(scoreStr.match(/(\d)/)?.[1]);
+    let html = before ? `<p style="margin-bottom:10px">${before.replace(/\n/g,'<br>')}</p>` : '';
+    html += `<div class="score-card">
+      <div class="sc-head"><span>Evaluation</span><span class="sc-val">Score: ${scoreMatch[1]}/5</span></div>
+      <div class="sc-body">
+        ${correct?`<div class="sc-row"><span style="color:var(--accent)">✓</span><span>${correct}</span></div>`:''}
+        ${missing?`<div class="sc-row"><span style="color:var(--danger)">✗</span><span>${missing}</span></div>`:''}
+        ${expects?`<div class="sc-row"><span style="color:var(--warn)">💡</span><span>${expects}</span></div>`:''}
+      </div>
+    </div>`;
 
-        // Extract score for tracking
-        trackScore(scoreNum);
+    // Add follow-up if present
+    const followUp = text.match(/follow.?up[^:]*:\s*([^\n]+(?:\n(?!Score:)[^\n]+)*)/i)?.[1];
+    if (followUp) html += `<p style="margin-top:10px;color:var(--muted);font-size:12.5px"><em>Follow-up: ${followUp.trim()}</em></p>`;
 
-        html += `<div class="score-card">
-          <div class="score-header">
-            <span>Evaluation</span>
-            <span class="score-value">${scoreStr}</span>
-          </div>
-          <div class="score-body">
-            ${correct ? `<div class="score-row"><span class="score-icon check">✓</span><span>${correct}</span></div>` : ''}
-            ${missing ? `<div class="score-row"><span class="score-icon cross">✗</span><span>${missing}</span></div>` : ''}
-            ${expects ? `<div class="score-row"><span class="score-icon bulb">💡</span><span>${expects}</span></div>` : ''}
-          </div>
-        </div>`;
-        i++; // skip next part since we consumed it
-      } else {
-        if (parts[i].replace(/\n/g, '').trim()) {
-          html += `<p style="margin-bottom:6px">${parts[i].replace(/\n/g, '<br>').trim()}</p>`;
-        }
-      }
-    }
-    bubble.innerHTML = html;
+    bub.innerHTML = html;
+    div.appendChild(av); div.appendChild(bub);
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
   } else {
-    bubble.innerHTML = content
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\n\n/g, '<br><br>')
-      .replace(/\n/g, '<br>');
+    addMessage('coach', text);
   }
-
-  div.appendChild(avatar);
-  div.appendChild(bubble);
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
 }
 
 function addTyping() {
-  const messages = document.getElementById('messages');
+  const msgs = document.getElementById('messages');
   const div = document.createElement('div');
-  div.className = 'message coach';
-  div.id = 'typing-indicator';
-
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar coach';
-  avatar.textContent = 'AI';
-
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble typing';
-  bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-
-  div.appendChild(avatar);
-  div.appendChild(bubble);
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+  div.className = 'message coach'; div.id = 'typing';
+  const av = document.createElement('div');
+  av.className = 'avatar ai'; av.textContent = 'AI';
+  const bub = document.createElement('div');
+  bub.className = 'bubble typing';
+  bub.innerHTML = '<div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>';
+  div.appendChild(av); div.appendChild(bub);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function removeTyping() {
-  document.getElementById('typing-indicator')?.remove();
-}
+function removeTyping() { document.getElementById('typing')?.remove(); }
 
-function trackScore(score) {
-  if (!score || isNaN(score)) return;
-  questionCount++;
-  sessionScores.push(score);
+// ── Score tracking ──────────────────────────────────────
+function extractScore(reply, question) {
+  const m = reply.match(/Score:\s*([1-5])\/5/i);
+  if (!m) return;
+  const score = parseInt(m[1]);
+  scores.push(score);
 
-  const avg = sessionScores.reduce((a,b) => a+b, 0) / sessionScores.length;
+  // Update stats panel
+  const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+  document.getElementById('sq').textContent = scores.length;
+  document.getElementById('savg').textContent = avg.toFixed(1)+'/5';
+  document.getElementById('sbar').style.width = (avg/5*100)+'%';
 
-  document.getElementById('stat-q').textContent = questionCount;
-  document.getElementById('stat-avg').textContent = avg.toFixed(1) + '/5';
-  document.getElementById('stat-bar').style.width = (avg / 5 * 100) + '%';
+  let sig = '—', sigClass = 'o';
+  if (avg>=4.5){sig='Strong hire';sigClass='g'}
+  else if(avg>=3.5){sig='Hire';sigClass='g'}
+  else if(avg>=2.5){sig='Mixed';sigClass='o'}
+  else{sig='Not ready';sigClass='r'}
+  const sigEl = document.getElementById('ssig');
+  sigEl.textContent = sig; sigEl.className = `stat-value ${sigClass}`;
 
-  let signal = '—';
-  let signalColor = 'var(--muted)';
-  if (avg >= 4.5) { signal = 'Strong hire'; signalColor = 'var(--accent)'; }
-  else if (avg >= 3.5) { signal = 'Hire'; signalColor = 'var(--accent)'; }
-  else if (avg >= 2.5) { signal = 'Mixed'; signalColor = 'var(--warn)'; }
-  else if (questionCount > 0) { signal = 'Not ready'; signalColor = 'var(--danger)'; }
-
-  const el = document.getElementById('stat-signal');
-  el.textContent = signal;
-  el.style.color = signalColor;
-  el.style.fontSize = '14px';
-
-  // Add to session log
-  updateSessionLog();
-
-  // Trigger git commit simulation
-  const topic = currentMode === 'code' ? 'coding' : currentMode === 'mock' ? 'mock-interview' : 'interview-qa';
-  simulateGitCommit(topic, score);
-}
-
-function updateSessionLog() {
-  const log = document.getElementById('session-log');
-  const topics = ['statistics','ml-theory','coding','sql','deep-learning','mock'];
-  const colors = ['var(--accent)','var(--warn)','var(--info)','var(--accent)','var(--warn)','var(--info)'];
-
-  log.innerHTML = sessionScores.slice(-5).reverse().map((score, i) => {
-    const color = score >= 4 ? 'var(--accent)' : score >= 3 ? 'var(--warn)' : 'var(--danger)';
-    const topic = topics[i % topics.length];
-    return `<div class="log-entry">
-      <span class="log-topic">${topic}</span>
-      <span class="log-score" style="color:${color}">${score}/5</span>
-    </div>`;
-  }).join('');
-}
-
-function simulateGitCommit(topic, score) {
-  const hash = Math.random().toString(36).substr(2, 7);
-  const msg = `${hash.substr(0,7)} progress: ${topic} ${score}/5`;
-
-  gitCommits.unshift(msg);
-
-  const els = ['git-log-1','git-log-2','git-log-3'];
-  gitCommits.slice(0,3).forEach((commit, i) => {
-    const el = document.getElementById(els[i]);
-    if (el) {
-      el.textContent = commit;
-      el.style.color = i === 0 ? 'var(--accent)' : 'var(--muted)';
+  // Update topic badge
+  const topicMap = [
+    [/bias|variance|overfitting|regularization|random.forest|decision.tree|gradient.boost|xgboost|svm|knn|cluster/i,'ml-theory'],
+    [/p.value|hypothesis|confidence|bayesian|distribution|probability|central.limit|a\/b.test|statistic/i,'statistics'],
+    [/sql|query|join|window|cte|aggregate|group.by/i,'sql'],
+    [/neural|backprop|transformer|attention|cnn|rnn|lstm|dropout|batch.norm|deep.learn/i,'deep'],
+    [/pandas|numpy|sklearn|scikit|implement|code|write|function/i,'coding'],
+    [/deploy|pipeline|airflow|docker|mlops|monitor|drift|feature.store/i,'mlops'],
+  ];
+  for(const[re,tid] of topicMap){
+    if(re.test(question)||re.test(reply)){
+      const el = document.getElementById('t-'+tid);
+      if(el){
+        el.textContent = score+'/5';
+        el.className = `tscore ${score>=4?'hi':score>=3?'md':'lo'}`;
+      }
+      break;
     }
-  });
-
-  // Show toast
-  const toast = document.getElementById('git-toast');
-  toast.textContent = `✓ committed: ${msg}`;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-
-  // Update topic badges
-  updateTopicBadges(topic, score);
-}
-
-function updateTopicBadges(topic, score) {
-  const badges = document.querySelectorAll('.topic-badge');
-  const topicMap = {
-    'statistics': 0, 'ml-theory': 1, 'deep-learning': 2,
-    'sql': 3, 'coding': 4, 'mlops': 5, 'interview-qa': 0, 'mock-interview': 0
-  };
-  const idx = topicMap[topic];
-  if (idx === undefined) return;
-
-  const badge = badges[idx];
-  if (!badge) return;
-  const scoreEl = badge.querySelector('.topic-score');
-  scoreEl.textContent = score + '/5';
-  scoreEl.className = 'topic-score ' + (score >= 4 ? 'score-high' : score >= 3 ? 'score-mid' : 'score-low');
-}
-
-async function sendMessage() {
-  const input = document.getElementById('input');
-  const text = input.value.trim();
-  if (!text || isLoading) return;
-
-  input.value = '';
-  input.style.height = 'auto';
-  document.getElementById('send-btn').disabled = true;
-  isLoading = true;
-
-  addMessage('user', text);
-  conversationHistory.push({ role: 'user', content: text });
-
-  addTyping();
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: conversationHistory
-      })
-    });
-
-    const data = await response.json();
-    const reply = data.content?.[0]?.text || 'Something went wrong.';
-
-    conversationHistory.push({ role: 'assistant', content: reply });
-
-    removeTyping();
-    addMessage('assistant', reply);
-
-  } catch (err) {
-    removeTyping();
-    addMessage('assistant', `Connection error. In a real deployment, this connects to the Claude API via gitclaw. Try running locally:\n\n\`gitclaw "Quiz me on random forests"\``);
-    console.error(err);
   }
 
-  isLoading = false;
+  // Session log
+  updateLog(score, question);
+
+  // Git memory simulation
+  addGitCommit(score, question);
+}
+
+function updateLog(score, question) {
+  const log = document.getElementById('slog');
+  const color = score>=4?'var(--accent)':score>=3?'var(--warn)':'var(--danger)';
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="log-topic">${question.slice(0,30)}...</span><span class="log-score" style="color:${color}">${score}/5</span>`;
+  if(log.querySelector('.log-entry')==null) log.innerHTML='';
+  log.insertBefore(entry, log.firstChild);
+}
+
+function addGitCommit(score, question) {
+  const topic = question.toLowerCase().includes('sql')?'sql':
+    question.toLowerCase().includes('stat')?'statistics':
+    question.toLowerCase().includes('code')||question.toLowerCase().includes('pandas')?'coding':'ml-theory';
+  const hash = Math.random().toString(36).substr(2,7);
+  const msg = `${hash} progress: ${topic} ${score}/5`;
+  gitLog.unshift(msg);
+
+  const gl = document.getElementById('git-log');
+  gl.innerHTML = gitLog.slice(0,4).map((m,i)=>
+    `<div class="git-entry ${i===0?'new':''}">${m}</div>`
+  ).join('');
+
+  // Toast
+  const toast = document.getElementById('toast');
+  toast.textContent = `✓ ${msg}`;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 2500);
+}
+
+// ── Init ────────────────────────────────────────────────
+if (apiKey) {
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('key-status').textContent = '✓ ' + provider;
+  document.getElementById('key-status').classList.add('active');
+  document.getElementById('inp').disabled = false;
   document.getElementById('send-btn').disabled = false;
-  document.getElementById('input').focus();
+  document.getElementById('inp').placeholder = PLACEHOLDERS[currentSkill];
+  setProvider(provider);
 }
 </script>
 </body>

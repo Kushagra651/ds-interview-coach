@@ -34,7 +34,7 @@ The killer feature: **your progress lives in git**. Every session is committed t
 npm install -g gitclaw
 
 # Clone this repo
-git clone https://github.com/yourusername/ds-interview-coach
+git clone https://github.com/Kushagra651/ds-interview-coach
 cd ds-interview-coach
 
 # Set your API key
@@ -58,7 +58,7 @@ import { ClawContainer } from 'clawcontainer';
 
 const cc = new ClawContainer('#app', {
   template: 'gitclaw',
-  repo: 'https://github.com/yourusername/ds-interview-coach',
+  repo: 'https://github.com/Kushagra651/ds-interview-coach',
   env: { ANTHROPIC_API_KEY: 'sk-...' }
 });
 await cc.start();

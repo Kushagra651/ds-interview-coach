@@ -1,0 +1,19 @@
+name: ds-interview-coach
+version: 1.0.0
+description: "A ruthlessly honest Data Science & ML interview coach. Challenges you with real questions, evaluates answers Socratically, executes your code, and tracks your progress in git-native memory."
+author: Kushagra651
+repository: https://github.com/Kushagra651/ds-interview-coach
+tags:
+  - data-science
+  - machine-learning
+  - interview-prep
+  - education
+  - career
+skills:
+  - interview-qa
+  - code-challenge
+  - progress-tracker
+  - mock-interview
+model:
+  preferred: claude-sonnet-4-20250514
+license: MIT

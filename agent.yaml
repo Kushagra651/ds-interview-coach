@@ -7,6 +7,12 @@ model:
   preferred: claude-sonnet-4-20250514
   fallback:
     - claude-haiku-4-5-20251001
+    - ollama:llama3.2
+
+memory:
+  path: memory/progress.json
+  auto_commit: true
+  commit_message_template: "progress: {topic} scored {score}/5 — {timestamp}"
 
 skills:
   - interview-qa
